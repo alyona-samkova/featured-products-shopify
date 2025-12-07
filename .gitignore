@@ -1,0 +1,32 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# IDE
+.idea/
+.vscode/
+
+# Shopify CLI + GitHub Integration
+.shopify/
+.shopify-cli.yml
+shopify.theme.toml
+*.theme
+config/*.json.*   # временные файлы от merge Shopify
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+
+# Build artifacts (если вдруг webpack создаёт)
+dist/
+public/dist/
+public/build/
+.build/
+.cache/
+
+# Env
+.env
+.env.*
