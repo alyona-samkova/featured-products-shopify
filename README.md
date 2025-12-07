@@ -26,6 +26,10 @@ The system uses Liquid templates, a custom Web Component, SCSS compiled with Web
 
 * Install dependencies:  
   `npm install`
+* Theme Setup Using Shopify CLI
+  `shopify theme pull --store <your-shopify-store.myshopify.com>`
+* Start the development server
+  `shopify theme dev`
 * Compile SCSS using Webpack:  
   `npm run build:dev`
 * Resulting file `featured-products.css` will be emitted into `assets/`
