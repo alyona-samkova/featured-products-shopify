@@ -1,0 +1,92 @@
+{% comment %}
+  Accepts:
+  - product: product object
+{% endcomment %}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign form_id = 'featured-add-to-cart-' | append: product.id
+
+  assign has_sale = false
+  if product.compare_at_price_max > product.price_max
+    assign has_sale = true
+  endif
+-%}
+
+<featured-product-card
+  class='featured-product-card'
+  data-product-id='{{ product.id }}'
+>
+  <a href='{{ product.url }}' class='featured-product-card__link'>
+    <div class='featured-product-card__image-wrapper'>
+      {%- if has_sale -%}
+        <span class='badge price__badge-sale color-{{ settings.sale_badge_color_scheme }} featured-product-card__badge-sale'>
+          {{ 'products.product.on_sale' | t | default: 'Sale' }}
+        </span>
+      {%- endif -%}
+
+      {%- if product.featured_image -%}
+        <img
+          src='{{ product.featured_image | img_url: 'large' }}'
+          alt='{{ product.title | escape }}'
+          loading='lazy'
+        >
+      {%- else -%}
+        <div class='product__media media media--square'>
+          {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class='featured-product-card__info'>
+      <h3 class='featured-product-card__title'>
+        {{ product.title }}
+      </h3>
+    </div>
+  </a>
+
+  <product-form class='product-form featured-product-card__form'>
+    {%- form 'product',
+      product,
+      id: form_id,
+      class: 'form',
+      novalidate: 'novalidate',
+      data-type: 'add-to-cart-form'
+    -%}
+      <input type='hidden' name='id' value='{{ variant.id }}'>
+
+      <button
+        type='submit'
+        name='add'
+        class='featured-product-card__add-btn'
+        {% unless variant.available %}
+          disabled
+        {% endunless %}
+      >
+        {%- render 'loading-spinner' -%}
+        {%- comment -%} Button content {%- endcomment -%}
+        <span class='button__content'>
+          {% if variant.available %}
+            {% if has_sale %}
+              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }} —
+              <span class='featured-product-card__price-old'>
+                <s>{{ variant.compare_at_price | money }}</s>
+              </span>
+              <span class='featured-product-card__price-sale'>
+                {{ variant.price | money }}
+              </span>
+            {% else %}
+              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }} —
+              {{ variant.price | money }}
+            {% endif %}
+          {% else %}
+            {{ 'products.product.sold_out' | t }}
+          {% endif %}
+        </span>
+      </button>
+      <div class='product-form__error-message-wrapper' role='alert' hidden>
+        <span class='product-form__error-message'></span>
+      </div>
+    {%- endform -%}
+  </product-form>
+</featured-product-card>

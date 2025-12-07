@@ -1,0 +1,110 @@
+{% comment %}
+  Section: Featured Products (Custom)
+
+  Purpose:
+  - Render a small grid of featured products from a selected collection.
+  - Exclude products that are already in the customer's cart.
+  - Hide the title and grid when there are no visible products left.
+
+  Behaviour:
+  - `featured-products.js`:
+    - Listens for cart add requests (/cart/add, /cart/add.js)
+    - Refreshes this section using the `sections` query parameter
+    - Ensures products already in the cart disappear from this section.
+
+  Notes:
+  - The root <section> is always rendered to keep section refresh stable.
+  - When there are no visible products:
+    - Title is hidden
+    - Grid is not rendered
+    - Optional: you can hide the whole section via CSS
+      using the `featured-products-section--empty` class.
+{% endcomment %}
+
+{{ 'featured-products.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<script src='{{ 'price-per-item.js' | asset_url }}' defer='defer'></script>
+<script src='{{ 'featured-products.js' | asset_url }}' defer='defer'></script>
+
+{%- liquid
+  assign featured_collection = collections[section.settings.collection]
+  assign cart_product_ids = cart.items | map: 'product_id'
+  assign has_visible_products = false
+
+  if featured_collection
+    assign products_count = featured_collection.products_count | plus: 0
+
+    if products_count > 0
+      for product in featured_collection.products limit: section.settings.product_limit
+        unless cart_product_ids contains product.id
+          assign has_visible_products = true
+          break
+        endunless
+      endfor
+    endif
+  endif
+-%}
+
+<section
+  id='section-{{ section.id }}'
+  data-section-id='{{ section.id }}'
+  data-section-type='featured-products'
+  class='featured-products{% unless has_visible_products %} featured-products__empty{% endunless %}'
+>
+  <div class='page-width'>
+    {%- if has_visible_products and section.settings.title != blank -%}
+      <h2 class='featured-products__title'>
+        {{ section.settings.title }}
+      </h2>
+    {%- endif -%}
+
+    {%- if has_visible_products
+      and featured_collection
+      and featured_collection.products_count > 0
+    -%}
+      <div class='featured-products__grid'>
+        {%- for product in featured_collection.products limit: section.settings.product_limit -%}
+          {%- unless cart_product_ids contains product.id -%}
+            {%- render 'featured-product-card', product: product -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Products Custom",
+  "tag": "section",
+  "class": "section section-featured-products-custom",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Featured products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Select a collection to use as a source for featured products."
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "label": "Maximum number of products",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products Custom"
+    }
+  ]
+}
+{% endschema %}
