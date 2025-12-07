@@ -1,0 +1,113 @@
+@use 'mediaquares-mixin' as mq;
+
+:root {
+  --blue: #464b90;
+  --gray: #656874;
+  --white: #fff;
+}
+
+.featured-products {
+  &__title {
+    color: var(--gray);
+    font-family: 'Gothic A1', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    margin: 50px 0 40px;
+    text-align: center;
+
+    @include mq.mq-up(md) {
+      font-size: 42px;
+      margin: 60px 0;
+    }
+  }
+
+  &__grid {
+    display: grid;
+
+    @include mq.mq-up(md) {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+  }
+
+  &__empty {
+    display: none;
+  }
+
+  .page-width {
+    max-width: 1180px;
+
+    @include mq.mq-down(md) {
+      padding: 0;
+    }
+  }
+}
+
+.featured-product-card {
+  text-align: center;
+  margin-bottom: 50px;
+
+  @include mq.mq-up(md) {
+    margin-bottom: 60px;
+  }
+
+  &__title {
+    color: var(--gray);
+    font-family: 'Gothic A1', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 24px;
+  }
+
+  &__link {
+    text-decoration: none;
+    width: 100%;
+  }
+
+  &__image-wrapper {
+    margin-bottom: 40px;
+    position: relative;
+    padding-top: calc(340 / 520 * 100%);
+
+    img,
+    .placeholder-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  &__add-btn {
+    background-color: var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 40px;
+    color: var(--white);
+    cursor: pointer;
+    font-family: 'Gothic A1', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 20px;
+    transition: 0.3s ease-in-out;
+    position: relative;
+
+    &:hover {
+      background-color: var(--white);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+  }
+
+  &__price-old {
+    text-decoration: line-through;
+    margin-right: 8px;
+  }
+
+  &__badge-sale {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    z-index: 1;
+  }
+}
