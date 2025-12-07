@@ -30,3 +30,6 @@ public/build/
 # Env
 .env
 .env.*
+
+# Source maps
+*.map

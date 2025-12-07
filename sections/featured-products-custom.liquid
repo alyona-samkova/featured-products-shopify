@@ -1,29 +1,20 @@
 {% comment %}
-  Section: Featured Products (Custom)
+  Renders a dynamic grid of featured products that hides items already in the cart.
+  Requires 'featured-products.js' for real-time updates via PubSub.
 
-  Purpose:
-  - Render a small grid of featured products from a selected collection.
-  - Exclude products that are already in the customer's cart.
-  - Hide the title and grid when there are no visible products left.
+  Usage:
+  Add this section via the Theme Editor.
 
-  Behaviour:
-  - `featured-products.js`:
-    - Listens for cart add requests (/cart/add, /cart/add.js)
-    - Refreshes this section using the `sections` query parameter
-    - Ensures products already in the cart disappear from this section.
-
-  Notes:
-  - The root <section> is always rendered to keep section refresh stable.
-  - When there are no visible products:
-    - Title is hidden
-    - Grid is not rendered
-    - Optional: you can hide the whole section via CSS
-      using the `featured-products-section--empty` class.
+  Accepts:
+  - title: {String} Section heading.
+  - collection: {Collection} Source collection.
+  - product_limit: {Number} Maximum items to display.
 {% endcomment %}
 
 {{ 'featured-products.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 <script src='{{ 'price-per-item.js' | asset_url }}' defer='defer'></script>
+<script src='{{ 'product-form.js' | asset_url }}' defer='defer'></script>
 <script src='{{ 'featured-products.js' | asset_url }}' defer='defer'></script>
 
 {%- liquid
@@ -45,11 +36,11 @@
   endif
 -%}
 
-<section
+<featured-products-section
   id='section-{{ section.id }}'
   data-section-id='{{ section.id }}'
   data-section-type='featured-products'
-  class='featured-products{% unless has_visible_products %} featured-products__empty{% endunless %}'
+  class='shopify-section featured-products{% unless has_visible_products %} featured-products__empty{% endunless %}'
 >
   <div class='page-width'>
     {%- if has_visible_products and section.settings.title != blank -%}
@@ -71,7 +62,7 @@
       </div>
     {%- endif -%}
   </div>
-</section>
+</featured-products-section>
 
 {% schema %}
 {

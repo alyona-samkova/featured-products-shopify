@@ -1,6 +1,11 @@
 {% comment %}
+  Renders a product card for the custom featured products section.
+
+  Usage:
+  {% render 'featured-product-card', product: product %}
+
   Accepts:
-  - product: product object
+  - product: {Object} Product Liquid object.
 {% endcomment %}
 
 {%- liquid
@@ -13,10 +18,7 @@
   endif
 -%}
 
-<featured-product-card
-  class='featured-product-card'
-  data-product-id='{{ product.id }}'
->
+<div class='featured-product-card' data-product-id='{{ product.id }}'>
   <a href='{{ product.url }}' class='featured-product-card__link'>
     <div class='featured-product-card__image-wrapper'>
       {%- if has_sale -%}
@@ -89,4 +91,4 @@
       </div>
     {%- endform -%}
   </product-form>
-</featured-product-card>
+</div>
